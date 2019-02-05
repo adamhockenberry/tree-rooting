@@ -3,6 +3,11 @@ import pandas as pd
 from scipy.optimize import minimize
 from scipy import stats
 
+
+###########################################################################################
+###########################################################################################
+###########################################################################################
+###########################################################################################
 def final_root(clade1, clade2, max_distance, tree):
     '''
     Given the target clades, this actually re-roots the tree.
@@ -21,7 +26,8 @@ def final_root(clade1, clade2, max_distance, tree):
     else: 
         raise ValueError("Somehow, failed to find the midpoint!")
     ###Specifying the outgroup_branch_length directly with this flag lead to some
-    ###error-prone behavior so I'm doing it in two steps. Must be a bug in Bio.Phylo
+    ###error-prone behavior so I'm doing it in two steps. Must be a bug and/or mis-understanding
+    ###in Bio.Phylo
     tree.root_with_outgroup(outgroup_node, outgroup_branch_length=0.0)
     assert outgroup_node == tree.root.clades[1]
     tree.root.clades[0].branch_length = tree.root.clades[0].branch_length + root_remainder
@@ -95,7 +101,57 @@ def mp_root_adhock(tree):
 ###########################################################################################
 ###########################################################################################
 ###########################################################################################
-def branch_scan_ml(modifier, ds_dists, us_dists):
+def update_depth_array_dict(my_clade, parent_clade, depths_dict, finished):
+    '''
+    This function updates the depths of each terminal in a pretty straightforward manner.
+    Using pandas here rather than numpy because speed doesn't seem to be much of a factor 
+    but it could definitely be sped up by ridding our selves from the dataframe calls
+    '''
+    ###First grab who is downstream of this new clade
+    ds_count = len(my_clade.get_terminals())
+    new_array = np.array(depths_dict[parent_clade])
+    new_array[len(finished):len(finished)+ds_count] -= my_clade.branch_length
+    new_array[:len(finished)] += my_clade.branch_length
+    new_array[len(finished)+ds_count:] += my_clade.branch_length
+    depths_dict[my_clade] = new_array
+    return depths_dict, ds_count 
+
+
+def recursive_crawl_mlfit(node, parent_node, function_optima, depths_dict, finished):
+    if parent_node:
+        depths_dict, ds_count = update_depth_array_dict(node, parent_node, depths_dict, finished)
+        res = optimize_root_loc_on_branch_mlfit(node, depths_dict[node], ds_count, finished)
+        function_optima.append((node, res))
+    #########################
+    #Recurse#################
+    #########################
+    if len(node.clades) == 2:
+        l_clade, r_clade = node.clades
+        function_optima, depths_dict, finished = recursive_crawl_mlfit(l_clade, node, function_optima, depths_dict, finished)
+        function_optima, depths_dict, finished = recursive_crawl_mlfit(r_clade, node, function_optima, depths_dict, finished)
+    elif len(node.clades) == 0:
+        finished.append(node)
+        return function_optima, depths_dict, finished
+    else:
+        print('Some big error here with the number of clades stemming from this root')
+    return function_optima, depths_dict, finished
+
+def optimize_root_loc_on_branch_mlfit(my_clade, depths_array, ds_count, finished):
+    ''' 
+    While the update_depth_df_dict function gets us started on this new terminal, this function
+    will optimize the location on that terminal
+    '''
+    downstream_dists = np.array(depths_array[len(finished):len(finished)+ds_count])
+    upstream_dists = np.concatenate((depths_array[:len(finished)], depths_array[len(finished)+ds_count:]))
+    bl_bounds = np.array([[0., my_clade.branch_length]])
+    ###Optimize!
+    ###Valid options for method are L-BFGS-B, SLSQP and TNC
+    res = minimize(branch_scan_mlfit, np.array(np.mean(bl_bounds)),\
+                          args=(downstream_dists, upstream_dists),\
+                          bounds=bl_bounds, method='L-BFGS-B') 
+    return res
+
+def branch_scan_mlfit(modifier, ds_dists, us_dists):
     temp_ds_dists = ds_dists + modifier
     temp_us_dists = us_dists - modifier
     all_dists = np.concatenate((temp_ds_dists, temp_us_dists))
@@ -104,66 +160,11 @@ def branch_scan_ml(modifier, ds_dists, us_dists):
     #return np.std(all_dists)/np.abs(np.mean(all_dists))
     return -np.sum(stats.norm.logpdf(all_dists, loc=mean, scale=std))
 
-def update_depth_df_dict(my_clade, parent_clade, depths_dict):
-    downstream_terms = [i.name for i in my_clade.get_terminals()]
-    upstream_terms = list(set(list(depths_dict[parent_clade].index)) - set(downstream_terms))
-    depths_dict[my_clade] = depths_dict[parent_clade].copy(deep=True)
-    depths_dict[my_clade].loc[downstream_terms, 'depth'] -= my_clade.branch_length
-    depths_dict[my_clade].loc[upstream_terms, 'depth'] += my_clade.branch_length
-    return depths_dict, downstream_terms, upstream_terms
-
-def recursive_crawl_ml(hypothetical_root, explored, function_optima, depths_dict, tree):
-    if len(hypothetical_root.clades) == 2:
-        l_clade, r_clade = hypothetical_root.clades 
-        l_bl = l_clade.branch_length
-        r_bl = r_clade.branch_length
-        #L clade first
-        if l_bl > 0:
-            depths_dict, downstream_terms, upstream_terms = update_depth_df_dict(l_clade, hypothetical_root, depths_dict)
-            res = optimize_root_loc_on_branch(l_clade, depths_dict[l_clade], downstream_terms, upstream_terms)
-            function_optima.append((l_clade, res))
-            explored, function_optima, depths_dict = recursive_crawl_ml(l_clade, explored, function_optima, depths_dict, tree)
-        #R clade second
-        if r_bl > 0:
-            depths_dict, downstream_terms, upstream_terms = update_depth_df_dict(r_clade, hypothetical_root, depths_dict)
-            res = optimize_root_loc_on_branch(r_clade, depths_dict[r_clade], downstream_terms, upstream_terms)
-            function_optima.append((r_clade, res))
-            explored, function_optima, depths_dict = recursive_crawl_ml(r_clade, explored, function_optima, depths_dict, tree)
-        
-    #elif len(hypothetical_root.clades) == 1:
-    #    l_clade = hypothetical_root.clades[0]
-    #    l_bl = l_clade.branch_length
-    #    if l_bl > 0:
-    #        depths_dict, downstream_terms, upstream_terms = update_depth_df_dict(l_clade, hypothetical_root, depths_dict)
-    #        res = optimize_root_loc_on_branch(l_clade, depths_dict[l_clade], downstream_terms, upstream_terms)
-    #        function_optima.append((l_clade, res))
-    #        explored, function_optima, depths_dict = recursive_crawl_ml(l_clade, explored, function_optima, depths_dict, tree)
-    
-    elif len(hypothetical_root.clades) == 0:
-        explored.append(hypothetical_root)
-        return explored, function_optima, depths_dict
-    
-    else:
-        print('Some big error here with the number of clades stemming from this root')
-    explored.append(hypothetical_root)
-    return explored, function_optima, depths_dict
-
-def optimize_root_loc_on_branch(my_clade, depths_df, downstream_terms, upstream_terms):
-    '''
-    '''
-    downstream_dists = np.array(depths_df.loc[downstream_terms, 'depth'])
-    upstream_dists = np.array(depths_df.loc[upstream_terms, 'depth'])
-    bl_bounds = np.array([[0., my_clade.branch_length]])
-    ###Valid options for method are L-BFGS-B, SLSQP and TNC
-    res = minimize(branch_scan_ml, np.array(np.mean(bl_bounds)),\
-                          args=(downstream_dists, upstream_dists),\
-                          bounds=bl_bounds, method='L-BFGS-B') 
-    return res
-
-def ml_root_adhock(tree):
-    '''
+def mlfit_root_adhock(tree):
+    ''' 
     This implements a rooting scheme to maximize the likelihood of the root-to-tip distances coming from a 
-    normal distribution. Could be easily modified to accomodate other distributions, of course, and some
+    normal distribution (which I believe is also equivalent to minimizing the standard deviation). 
+    This code could be easily modified to accomodate other distributions, of course, and some
     of these should probably be tested / ideologically considered. 
 
     Additional thought to consider is whether to include an outlier detection so that single branches do
@@ -172,13 +173,9 @@ def ml_root_adhock(tree):
     Finally, in scratch phase is an algorithm to consider weighted averages.
     '''
     initial_depths = tree.root.depths()
-    terminal_depths_df = pd.DataFrame()
-    terminal_depths_df['depth'] = np.nan
-    for term in tree.get_terminals():
-        terminal_depths_df.set_value(term.name, 'depth', initial_depths[term])
     depths_dict = {}
-    depths_dict[tree.root] = terminal_depths_df
-    explored, function_optima, depths_dict = recursive_crawl_ml(tree.root, [], [], depths_dict, tree)
+    depths_dict[tree.root] = np.array([initial_depths[i] for i in tree.get_terminals()])
+    function_optima, depths_dict, finished = recursive_crawl_mlfit(tree.root, None, [], depths_dict, [])
     function_optima = sorted(function_optima, key=lambda x: x[1].fun)
     tree.root_with_outgroup(function_optima[0][0], outgroup_branch_length=0.)
     assert tree.root.clades[1].branch_length == 0.
