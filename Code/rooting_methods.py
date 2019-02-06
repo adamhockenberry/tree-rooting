@@ -262,7 +262,6 @@ def mad_from_df(my_clade, my_terms, other_terms, lca_dist_df):
     ds_a_dists = lca_dist_df.loc[my_terms, other_terms].values.flatten(order='C')
     ds_b_dists = lca_dist_df.loc[other_terms, my_terms].values.flatten(order='F')
     ds_total_dists = ds_a_dists + ds_b_dists
-
     ###Using the analytical solution to "rho" parameter as outlined in the MAD paper
     total_bl = my_clade.branch_length
     if total_bl > 0.:
@@ -308,7 +307,9 @@ def recursive_crawl_mad(hypothetical_root, explored, function_optima, tree, lca_
         print('non binary tree...?')
     explored.append(hypothetical_root)
     return explored, function_optima, lca_dist_df_dict
-
+########################################################################
+########################################################################
+########################################################################
 def mad_root_adhock(tree):
     for node in tree.get_terminals() + tree.get_nonterminals():
         if node == tree.root:
