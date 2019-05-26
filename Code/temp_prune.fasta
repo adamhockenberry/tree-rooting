@@ -510,6 +510,22 @@ I-------------VPATIKTK---PREI-RVP-T-EE--------RA------------
 --QR------------SAQG-EKGDR-E-----AYR------------------------
 --TE-KVTD--AGP-GG---APVF-----------------------------RA-GFGR
 GAP--------PPQ------------------
+>CAEBR00455 | OMA803883 | A8Y1Y5 | [Caenorhabditis briggsae]
+------------------------------------------------------------
+----------------------------MFIPKSHTKIIYEYLFNEGVTVAKKDFNAKTH
+PNI--EG-VTNLEVIKTL---KSLASRELVKEQFAWRHYYWYLTDAGILYLREYLALPSE
+I-------------VPATIKTK---PREI-RVP-A-ED--------RV------------
+--PR------------AAQG-EKGDR-E-----AYR------------------------
+--TE-KVTE--AGP-GA---GPVF-----------------------------RA-GFGR
+GAP--------PPQ------------------
+>CAEJA16142 | OMA803883 | A0A2H2J6R7 | [Caenorhabditis japonica]
+------------------------------------------------------------
+----------------------------MFIPKSHTKLIYEYLFNEGVTVAKKDFNAKTH
+PNI--EG-VTNLEVIKTL---KSLASRELVKEQFAWRHYYWYLTDAGISYLREYLALPAE
+I-------------VPATIKTK---PREI-RVP-T-ED--------RA------------
+--PR------------AAQG-EKGDR-D-----AYR------------------------
+--TE-KVTD--AGP-GG---AQVY-----------------------------RA-GFGR
+GAP--------PAQ------------------
 >CAERE03811 | OMA803883 | E3LXI8 | [Caenorhabditis remanei]
 ------------------------------------------------------------
 ----------------------------MFIPKSRTKLIYEYLFNEGVTVAKKDFNAKTH
@@ -526,14 +542,6 @@ V-------------LPNTHKQR---LEPS-RVTYPDKM--------GG--G--GA-----
 --GR------------GFR--GGDDR-G-----AYRTT----------------------
 ---D-KQAD--AGP-GS----MPV-----------------------------RQ-GFGR
 GGGMPTSVPTPPPQEPQGVEDGGNFATGDSGW
->IXOSC18870 | OMA803883 | Q4PMD3 | [Ixodes scapularis]
-------------------------------------------------------------
-----------------------------MLMPKKNRVAIYEYLFKEGVLVAKKDFHAPKH
-PEL--EA-IPNLQVIKAL---QSLRSRGYVKEQFAWRHYYWYLTNEGIQYLRDFLHLPPE
-I-------------VPATLKKQ---SRQE-APS-R-RP--------KM------A--Q--
---DM------------QNK--APDDR-S-----DYRRAP-------------------G-
---LD-KKGD--VGP-GT-DTNFDF-----------------------------RG-GFGR
-GRG--------PPQ------------------
 >STRMM13392 | OMA803883 | T1JL09 | [Strigamia maritima]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRVQIYEYLFKEGVLVAKKDFHAPKH
@@ -542,30 +550,6 @@ I-------------VPSTLKRQ---QRPE-TTR-Q-RS--------RV------P--D--
 --AP------------SKQ--DGGER-D-----RYRKAP--G-------------P--G-
 --GD-KKSE--VGI-GMGGANMEF-----------------------------RG-GFGR
 GRPN----------------------------
->DAPPU04498 | OMA803883 | E9FSV0 | [Daphnia pulex]
-------------------------------------------------------------
-----------------------------MLMPKRHRALIYEYLFKEGVLVAMKDTHLAKH
-PEI---D-VPNLHVMKAL---QSLKSRAYVTEQFAWRHYYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLKPK----RTE-SAR-P-RA--------AA--A---A--R--
---PE------------ASK--MSEDR-S-----AYRRSA--P-------------A--G-
---GD-KKAD--VGA-GA-NPNLEF-----------------------------RG-GYGR
-GRGS-------APQ------------------
->LEPSM04718 | OMA803883 | D3PHV6 | [Lepeophtheirus salmonis]
-------------------------------------------------------------
-----------------------------MLMPKANLIKIYENLFNEGVMVAKKDVHAARH
-PNV---E-VPNLHVMKAL---NSLKSRGYVKEQFAWRHYYWYLTNDGIQYLRDFLHLPPE
-I-------------VPSTLKRH---VKAE-G-R-P-RA--------AA--S--SR--S--
---YD------------KPS--GAGDR-D-----AYRRNT-GS----------GV-P--S-
---GD-KTGA--AGP-GS--APMEF-----------------------------RG-GYGR
-GKPE----------------------------
->DANPL14632 | OMA803883 | EHJ77229 | [Danaus plexippus]
-------------------------------------------------------------
-----------------------------MLMPKQNRVAIYEYLFKEGVMVAKKDYHAPKH
-IDL--EK-IPNLQVIKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIEYLRIFLHLPPE
-I-------------VPATLKRS---VRTE-TVR---RG--------AV--G---R--P--
---DA------------PAR--SAEDR-S-----AYRRAP-------------PA-G--G-
---HD-KKAD--VGP-GS--SDVEF-----------------------------RG-GFGR
-GRP--------APN------------------
 >MELCN06617 | OMA803883 | MCINX015244 | [Melitaea cinxia]
 M------------------------FEIQY------------------------------
 ----------------------LKLLVKMLMPKQNRVAIYEYLFKEGVMVAKKDYHAPKH
@@ -574,28 +558,12 @@ I-------------VPATLKRS---VRVE-TVR---RG--------AV--G---R--S--
 --DA------------PAR--SAEDR-S-----MYRRAP-TT----------PG-A--P-
 --HD-KKAD--VGS-GS--APVEF-----------------------------RG-GYGR
 GRP--------AP-------------------
->TRICA02802 | OMA803883 | D2A360 | [Tribolium castaneum]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYEYLFKEGVMVAKKDTHAPKH
-PEL--ES-IPNLQVIKAL---QSLKSKGYVKEQFAWRHYYWYLTNNGIEYLRTILHLPPE
-I-------------VPSTLKRQ---ARTE-TTR-A-RP--------TP--F---K--S--
---ET------------SSK--PAEDR-A-----GYRRTP-GG-------------P--G-
---SD-KKAD--VGA-GT--ADLEF-----------------------------RG-GFGR
-GK---------APQ------------------
->DROVI04164 | OMA803883 | B4MAS4 | [Drosophila virilis]
+>DROBM11960 | OMA803883 | XP_016949639 | [Drosophila biarmipes]
 ------------------------------------------------------------
 ----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDFHAQKH
-PEL--ES-IPNLHVIKAL---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRSYLHLPPE
-I-------------VPSTLKRP---TRSE-PLR-P-RP--------AA--G--GP--RGP
---AD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
---VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
-GS---------RN-------------------
->DROGR05444 | OMA803883 | B4JME5 | [Drosophila grimshawi]
-------------------------------------------------------------
-----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDFHAQKH
-PEL--ES-IPNLHVIKAL---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRSYLHLPPE
-I-------------VPSTLKRP---TRSE-PLR-P-RP--------AT--G--GA--RGA
---AD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
+PEL--ES-IPNLHVIKAL---QSLHSRGLVREQFAWRHYYWYLTNEGIEELRSYLHLPPE
+I-------------VPSTLKRP---ARSE-TVR-P-RP--------AA--G--GP--RGP
+--GD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
 --VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
 GS---------RN-------------------
 >DROER05291 | OMA803883 | B3NVQ0 | [Drosophila erecta]
@@ -622,13 +590,29 @@ I-------------VPSTLKRP---ARSE-TVR-P-RP--------AA--G--GP--RGT
 --GD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
 --VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
 GS---------RN-------------------
->DROSE06585 | OMA803883 | B4I775 | [Drosophila sechellia]
+>DROSI13724 | OMA803883 | B4R7R9 | [Drosophila simulans]
 ------------------------------------------------------------
 ----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDFHAQKH
 PEL--ES-IPNLHVIKAM---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRSYLHLPPE
 I-------------VPSTLKRP---ARSE-TVR-P-RP--------AV--G--GP--RGP
 --GD------------ATK--TGEDR-S-----AYRRAP-GG-------------S--G-
 --VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
+GS---------RN-------------------
+>DROTK07424 | OMA803883 | XP_017009344 | [Drosophila takahashii]
+------------------------------------------------------------
+----------------------------MFIPKANRVAIYEYLFKEGVIVAKKDTRVLMH
+PDL--ET-VTNLQVIKAL---QSLHSRGLVKEQFAWRHFYWCLTNEGIEELRNYLHLPPE
+I-------------VPSTLTRP---SRSD-AVR-P-RP--------GA--G--GP--RGG
+GFGG------------PSK--TDEDR-S-----TYRRAP-RD-------------G--D-
+--FD-KKGD--VGP-GS--GRVEY-----------------------------RG-GFGR
+GS---------RY-------------------
+>DROWI04343 | OMA803883 | B4NDM2 | [Drosophila willistoni]
+------------------------------------------------------------
+----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDFHAQKH
+PEL--ET-IPNLHVIKAL---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRSYLHLPPE
+I-------------VPSTLKRP---ARSE-TVR-P-RP--------AA--G--GP--RGL
+--GD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
+--VD-KKGD--VGP-GT--GEVEF-----------------------------RG-GFGR
 GS---------RN-------------------
 >DROYA13485 | OMA803883 | B4PZG3 | [Drosophila yakuba]
 ------------------------------------------------------------
@@ -638,22 +622,14 @@ I-------------VPSTLKRP---ARSE-TVR-P-RP--------AV--G--GP--RGP
 --GD------------ATK--TGEDR-S-----AYRRAP-GG-------------S--G-
 --VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
 GS---------RN-------------------
->DROMO00976 | OMA803883 | B4L809 | [Drosophila mojavensis]
+>DROAN04290 | OMA803883 | B3MQA2 | [Drosophila ananassae]
 ------------------------------------------------------------
 ----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDFHAQKH
-PEL--ES-IPNLHVIKAL---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRTYLHLPPE
-I-------------VPSTLKRP---TRSE-PLR-P-RP--------AA--G--GP--RGP
---AD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
+PEL--ES-IPNLHVIKAL---QSLHSRGLVKEQFAWRHYYWYLTNEGIEELRSYLHLPPE
+I-------------VPSTLKRP---ARSE-TVR-P-RP--------AA--G--GP--RGP
+--GD------------ASK--TGEDR-S-----AYRRAP-GG-------------S--G-
 --VD-KKGD--VGP-GA--GEVEF-----------------------------RG-GFGR
 GS---------RN-------------------
->LUCCU06034 | OMA803883 | A0A0L0BT67 | [Lucilia cuprina]
-------------------------------------------------------------
-----------------------------MFMPKAHRVAIYEYLFKEGVIVAKKDTHAPKH
-PEL--ES-IPNLHVIKTM---QSLHSRGLVKEQFAWRHYYWYLTNEGIEFLRSYLHLPPE
-I-------------VPATLKRP---TRPE-TVR-P-RP--------AA--A--AR--S--
---GD------------VSK--TGEDR-S-----AYRRAP----------------G--G-
---AD-KKGD--VGA-GA--GDVEF-----------------------------RG-GFGR
-GRPQ----------------------------
 >ANOGA11721 | OMA803883 | Q7QEB0 | [Anopheles gambiae]
 ------------------------------------------------------------
 ----------------------------MFMPKAHRVAIYEYLFKEGVLVAQKDFYAPKH
@@ -678,12 +654,12 @@ I-------------VPSTLKRQ---TRSE-TTR-P-RP--------AA--G---A--R--
 --SE------------ASR--PTEDR-A-----GYRRGP-GG----------PA-G--P-
 --GD-KKAD--VGA-GT--GDVEF-----------------------------RG-GFGR
 GK----------PQ------------------
->LINHU13112 | OMA803883 | LOC105675803 | [Linepithema humile]
+>ATTCE08359 | OMA803883 | A0A158NGX1 | [Atta cephalotes]
 ------------------------------------------------------------
-----------------------------MLMPKKNRVAIYEYLFKEGVMVAKKDYHAPKH
+----------------------------MLMPKKNRVAIYEYLFKEGVMVAKKDYHASKH
 PEL--EN-IPNLQVIKAM---QSLKSRGYVKEQFAWRHFYWYLTNDGIEYLRGYLHLPPE
 I-------------VPSTLKKQ---PRSE-TTR-P-RP--------AA------T--R--
---SE------------GSR--PTEDR-A-----GYRRGP-AG----------PP-G--A-
+--SE------------GSR--PTEDR-A-----GYRRGP-GG----------PP-N--A-
 --GD-KKAD--VGA-GT--GDLEF-----------------------------RG-GFGR
 GK---------ALQ------------------
 >SOLIN00058 | OMA803883 | E9ITT7 | [Solenopsis invicta]
@@ -694,22 +670,30 @@ I-------------VPSTLKKQ---PRSE-TTR-P-RP--------AA------T--R--
 --SE------------GSR--PTEDR-A-----GYRRGP-GG----------PP-G--A-
 --GD-KKAD--VGA-GT--GDLEF-----------------------------RG-GFGR
 GK---------ALQ------------------
->PEDHC00087 | OMA803883 | E0VCE4 | [Pediculus humanus subsp. corporis]
+>HARSA09030 | OMA803883 | E2BVL8 | [Harpegnathos saltator]
 ------------------------------------------------------------
-----------------------------MLMPKKNRLSIYEYLFKEGVMVAKKDFHAAKH
-PEL--EN-IPNLQVIKAM---QSLKSRGYVNEQFAWRHYYWYLTNEGITYLRAFLHLPAE
-VSNIFMDKKENFQFCNPTLKRQ---VKQE-TAR-A-RP--------SA------P--R--
---SE------------GSK--LNDER-G-----AYRRTP-------------------G-
---LD-KKAD--VGA-GT--GEMEF-----------------------------RG-GFGR
-GK---------APQ------------------
->ZOONE01674 | OMA803883 | A0A067QVN3 | [Zootermopsis nevadensis]
-MSMNC--------------------YIQRY---FFHVE----------------------
--------------------ICVKCTGCRMLMPKKNRVAIYEYLFKEGVMVAKKDFHAPKH
-PEL--ES-IPNLQVIKAM---QSLKSRGFVSEQFAWRHFYWYLTNEGIGYLRNYLHLPAE
-I-------------VPSTLKRQ---GRQE-TAR-P-RP--------TA------P--R--
---SE------------GSR--PAEDR-A-----AYRHAP-RT----------GS-S--G-
---SD-KKAD--VGA-GT--GDVEF-----------------------------RG-GFGR
-GRG--------APQ------------------
+----------------------------MLMPKKNRVSIYEYLFKEGVMVAKKDYHAPKH
+PEL--ET-IPNLQVIKAM---QSLKSRGYVKEQFAWRHFYWYLTNDGIEFLRGYLHLPPE
+I-------------VPSTLKKQ---PRSE-TTR-P-RP--------AA------T--R--
+--SE------------GSR--PTEDR-A-----GYRRGP-GG----------APGG--A-
+--GD-KKAD--VGA-GT--GDLEF-----------------------------RG-GFGR
+GK---------ALQ------------------
+>RHOPR03195 | OMA803883 | R4G3Z9 | [Rhodnius prolixus]
+------------------------------------------------------------
+----------------------------MLISKKNRHAIYESLFKEGVMVAKKDYHALKH
+PDL--ET-IPNLEVIKTM---QSLKSRGYVKEQFAWRHFYWYLTNEGINFLRNYLHLPSE
+I-------------VPATLKRP---SRNE-TLR-P-RP--------AA--A------R--
+--PD------------TSR--TDEDR-S-----TYRRAP-TQ----------------Q-
+--PD-KKAD--VGA-GT--ADLEF-----------------------------RG-GYGR
+GRGA-------PPQ------------------
+>DIACI07053 | OMA803883 | Q0PXY1 | [Diaphorina citri]
+------------------------------------------------------------
+----------------------------MLMPKKNRYIIYEYLFKEGVLVAKKDFHAPKH
+PEL---D-VPNLQVIKTL---QSLKSKGWVNEQFAWRHYYWYITNDGIEKLRGVLNIPDE
+I-------------VPSTLKRQ---ARTT-DAS-K-VP--------RQ--M--TQ--R--
+--PD------------GGR--GADDR-M-----SYRKGP----------------Q--G-
+--VD-KKAD--VGA-GS--TEVEFKG---------------------------YG-GFGR
+GKA--------PPQ------------------
 >CAPTE10223 | OMA803883 | R7THG3 | [Capitella teleta]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRVAIYEHLFKEGVIVAKKDFRAPKH
@@ -718,6 +702,14 @@ I-------------VPATLKRQ---AKPD-PAR-P-RP--------KA------G--E--
 --ES------------RRP--MGEDR-D-----AYRKRA--P-------------G--G-
 --AD-KKGD--AGA-GS-NTDFQFSVEANPSHNKWTHCFIVLRPLAALSCHNKKT-GFVS
 GL------------------------------
+>LINUN25998 | OMA803883 | g7281 | [Lingula unguis]
+M-----------------------------------------------------------
+----------------------KDLETRMLMPKKARIAVYEHLFKEGVMVARKDFIAPKH
+PEL--DN-VRNLYVIKAM---QSLKSRGYVNEQFAWRHYYWYLTNEGIQYLRDFLHLPPE
+I-------------VPSTLKRQ---ARPE-AAR-AVRP--------K---G---P--EG-
+--PR------------SGP--GAADR-A-----EYRKAG--P-------------P--G-
+--VD-KKSE--VGA-GA-DPSFNF-----------------------------RG-GFGR
+GRGA-------PQQ------------------
 >CRAGI10539 | OMA803883 | Q70MT4 | [Crassostrea gigas]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRVQIFEYLFKEGVLVAKKDFSAPKH
@@ -734,14 +726,6 @@ I-------------VPATLKRQ---TRTE-AVRGP-RP--------KA------P--E--
 --LS------------RGG--PPSDR-------EYRRAP-AG-------------M--G-
 --GD-KKTD--AGP-GS-LRDIQY-----------------------------RA-GFGR
 GNVE----------------------------
->LOTGI17641 | OMA803883 | V4BAX1 | [Lottia gigantea]
-------------------------------------------------------------
-----------------------------MLMPKKNRVTIYEYLFKEGVMVAKKDFFAPRH
-PNI---N-VPNLHVIKAL---TSLKSRGLVREQFAWRHYYWYLTNEGIQFLRDFLHLPPE
-I-------------VPATLKRQ---QRSE-TVR-P-RI--------ST--K---P--SGD
-GAGR------------GGG--AHADR-G-----EYRKSG--P-------------P--G-
---GD-KKAD--VGA-GA-NPEFKF-----------------------------RG-GFGR
-GA---------PPSSGNQ--------------
 >BRAFL17607 | OMA803883 | C3Y5K7 | [Branchiostoma floridae]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRVAIYELLFKEGVMVAKKDYHLPKH
@@ -758,14 +742,6 @@ I-------------VPATLRRQ---IRPE-TAR-P-RP--------K---G---L--GED
 RPAR------------LGR--GEGDR-D-----TYRRAG--P-------------P--G-
 --AD-KKAE--AGA-GA-NSDFQF-----------------------------RG-GFGR
 GRGG-------QQQ------------------
->TAKRU02600 | OMA803883 | H2RRF5 | [Takifugu rubripes]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLTKH
-PELADKN-VPNLHVMKAM---QSLKSCGYVKEQFAWRHYYWYLTNEGIQYLRDFLHLPPE
-I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---M--EGE
-RPAR------------LNR--AEADR-D-----TYRRSA-AP-------------P--G-
---AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
-GRGQ-------QPQ------------------
 >TETNG02599 | OMA803883 | Q4RIE5 | [Tetraodon nigroviridis]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLTKH
@@ -774,15 +750,7 @@ I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---M--EGE
 RPAR------------LNR--AEADR-D-----TYRRSA-AP-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GYGR
 GRGQ-------QPQ------------------
->ORYLA14029 | OMA803883 | H2LSN9 | [Oryzias latipes]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLAKH
-PELADKN-VPNLHVMKAM---QSLKSCGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
-I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---M--EGE
-RPAR------------LNR--GEADR-D-----AYRRSA-AP-------------P--G-
---AD-KKAE--AGA-GS-ATEFHF-----------------------------RG-GFGR
-GRGQ-------QPQ------------------
->POEFO03407 | OMA803883 | A0A087YAT2 | [Poecilia formosa]
+>NOTFU16284 | OMA803883 | A0A1A8AVN4 | [Nothobranchius furzeri]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLAKH
 PELADKN-VPNLHVMKAM---QSLKSCGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
@@ -790,14 +758,22 @@ I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---M--EGE
 RPAR------------LNR--GEADR-D-----TYRRSA-AP-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
 GRGQ-------QPQ------------------
->ASTMX15709 | OMA803883 | W5LBR5 | [Astyanax mexicanus]
+>XIPMA13554 | OMA803883 | M4AU53 | [Xiphophorus maculatus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLAKH
 PELADKN-VPNLHVMKAM---QSLKSCGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
-I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---L--EGE
-RPAR------------LAR--GEGDR-D-----AYRRSA-AP-------------P--G-
+I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---M--EGE
+RPAR------------LNR--GEADR-D-----AYRRSA-AP-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
 GRGQ-------QPQ------------------
+>ORENI18527 | OMA803883 | I3KBR8 | [Oreochromis niloticus]
+------GSGPLTS------G----------------------------------------
+---------------------------KMLMPKKNRIAIYELLFKEGVMVAKKDVHLAKH
+PELADKN-VPNLHVMKAM---QSLKSCGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
+I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---V--EGE
+RPAR------------LNR--GEADR-D-----AYRRSA-AP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------QPQQE----------------
 >DANRE36984 | OMA803883 | F8W2R0 | [Danio rerio]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHLAKH
@@ -806,14 +782,22 @@ I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---L--EGE
 RPAR------------LAR--GEGDR-D-----AYRRSA-AQ-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
 GRGQ-------QPQ------------------
->PROCA01814 | OMA803883 | ENSPCAG00000012795 | [Procavia capensis]
-------------------------------------------------------------
+>LATCH18763 | OMA803883 | H3BCF9 | [Latimeria chalumnae]
+-------------------------------------V----------------------
+-------------------MIKLGLNVEMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELADRN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
+I-------------VPATLRRQ---TRPE-TAR-P-RP--------K---G---L--EGE
+RPAR------------LAR--GETDR-D-----TYRRSA-AP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>ORNAN13344 | OMA803883 | F7EGG4 | [Ornithorhynchus anatinus]
+S---LCTCQPREV-----------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQFVPLAH-------------------TC--SRV-SCVK
-MSCV---------Q------------------
+RPAR------------LTR--GEADR-D-----TYRRNA-AP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
 >LOXAF03040 | OMA803883 | G3T209 | [Loxodonta africana]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
@@ -822,36 +806,28 @@ I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->RABIT02340 | OMA803883 | G1T168 | [Oryctolagus cuniculus]
-------------MRTR--AGR----AAARASRPSGTAE--ATPDSARVLAGGGATPARKR
-RCAA--------HAPSFPASAPNPTAAAMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
->OCHPR02384 | OMA803883 | ENSOPRG00000002693 | [Ochotona princeps]
+>DIPOR03162 | OMA803883 | ENSDORG00000012060 | [Dipodomys ordii]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------IL-MAHN
-QQGS-------SPVNWRCV-----------WW
+--AD-KKAE--AGA-GS-ATEFQFVLIAH-------------------LL--VRK-SA--
+--------------------------------
+>FUKDA17428 | OMA803883 | ENSFDAG00000003603.1 | [Fukomys damarensis]
+------------------------------------------------------------
+----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---V--EGE
+RPMR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
 >CAVPO12790 | OMA803883 | ENSCPOG00000008613 | [Cavia porcellus]
 ------------------------------------SQ----------------------
 -------------------AVILVSYAQMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---V--EGE
 RPMR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
->CHILA10171 | OMA803883 | ENSCLAG00000009803.1 | [Chinchilla lanigera]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELADKN-VPNLHVMKAMQFLQSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---V--EGE
-RPMR------------LTR--GEADR-D-----TYRRSA-VP-------------S--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
 >OCTDE02069 | OMA803883 | ENSODEG00000017159.1 | [Octodon degus]
@@ -862,30 +838,38 @@ I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---V--EGE
 RPMR------------LTR--GEADR-D-----AYRRSA-VP-------------A--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->JACJA00701 | OMA803883 | ENSJJAG00000023024.1 | [Jaculus jaculus]
+>RATNO17310 | OMA803883 | RS10_RAT | [Rattus norvegicus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRAQ-------PPQ------------------
->CHLSB10819 | OMA803883 | A0A0D9SBL4 | [Chlorocebus sabaeus]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---P--EGE
+RPAR------------FTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->PANPA07786 | OMA803883 | ENSPPAG00000023621.1 | [Pan paniscus]
+>NANGA06882 | OMA803883 | ENSNGAG00000021418.1 | [Nannospalax galili]
+------------------------------------------------------------
+----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---P--EGE
+RPAR------------FTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>MACMU16610 | OMA803883 | ENSMMUG00000000267 | [Macaca mulatta]
+------------------------------------------------------------
+----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
+RPAR------------LTR--GEADR-D-----TYRRSASVS-------------S--G-
+--AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>HUMAN24928 | OMA803883 | F6U211 | [Homo sapiens]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
+--AD-KKAE--AGA-GS-ATEFQFVLIAH-------------------DC--SQIMSFVK
+RKHV---------Q------------------
 >PONAB13267 | OMA803883 | H2PIR8 | [Pongo abelii]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
@@ -918,38 +902,30 @@ I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GS-ATEFQFVFIAH-------------------SC--AQI-SFMK
 RKRV---------Q-----------------Y
->AILME17748 | OMA803883 | F2X213 | [Ailuropoda melanoleuca]
+>MUSPF05594 | OMA803883 | M3XVI6 | [Mustela putorius furo]
+------------------------------------------------------------
+------------------------ASFQMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------KVCIG---L--EGE
+RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQPEK---------------
+>FELCA05363 | OMA803883 | M3WMF9 | [Felis catus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----AYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
->BOVIN10592 | OMA803883 | G5E6M8 | [Bos taurus]
-------------------------------------------------------------
-----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VPQVVICDIKARYK-T--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQPKQE--------------
->SHEEP10177 | OMA803883 | W5PLN8 | [Ovis aries]
-------------------------------------------------------------
--------------------FLLISFFLQMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPVTLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->PIGXX16150 | OMA803883 | ENSSSCG00000001528.2 | [Sus scrofa]
+>TURTR06256 | OMA803883 | ENSTTRG00000015064 | [Tursiops truncatus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
 PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------FTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
+RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------S--G-
+--AD-KKAE--AGA-GS-ATEFQF------------------------------------
+--------------------------------
 >MYOLU16880 | OMA803883 | G1P9D7 | [Myotis lucifugus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
@@ -957,6 +933,14 @@ PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
 I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RR-GFGR
+GRGQ-------PPQ------------------
+>HORSE09764 | OMA803883 | F6ZDM5 | [Equus caballus]
+------------------------------------------------------------
+----------------------------MLMPKKNR-AIYELPFKEGVMVA-KDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
+RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
 >DASNO19339 | OMA803883 | ENSDNOG00000011670 | [Dasypus novemcinctus]
 ------------------------------------------------------------
@@ -982,14 +966,6 @@ I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-AP-------------P--G-
 --AD-KKAE--AGA-GS-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->MELGA14555 | OMA803883 | H9H2E5 | [Meleagris gallopavo]
-------------------------------------------------------------
---------------------------KIMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
-PELVDKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
-I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
-RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
---AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
-GRGQ-------PPQ------------------
 >CHICK08041 | OMA803883 | E1C4N0 | [Gallus gallus]
 ------------------------------------------------------------
 ----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
@@ -998,11 +974,35 @@ I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
 RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
 --AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
 GRGQ-------PPQ------------------
->CIOIN15923 | OMA803883 | F7BK44 | [Ciona intestinalis]
+>FICAL09328 | OMA803883 | U3JME1 | [Ficedula albicollis]
 ------------------------------------------------------------
-----------------------------MLMPKKHRVLIYEHLFKEGVLVAIKDPFLDKH
-PEL--ES-VPNLHVMKAC---QSLKSRGYVRENFTWRHYYWILTNEGIQYLRDFLHLPPE
-I-------------VPSTLKRQ---PRPT-DTR-MQRQ--------KV------------
---ES------------RPA--YQSDR-E-----SYRHAP--Q-------------G--A-
---GD-KKAE--AGA-GT--GGFDF-----------------------------RGAGYGR
-GRGAA------PPQ------------------
+-------------------------PLQMLMPKKNRIAIYELLFKEGVMVAKKDVHMPKH
+PELVDKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
+RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>TAEGU07451 | OMA803883 | H0YU72 | [Taeniopygia guttata]
+------------------------------------------------------------
+----------------------------MLMPKKNRIAIYELLFKEGVMVAKKDVHMAKH
+PELVDKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
+RPAR------------LTR--GEADR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>XENTR15751 | OMA803883 | F6TC31 | [Xenopus tropicalis]
+---------PR-C-----------------------------------------------
+----------------------------MLMPKKDRIAIYELLFKEGVMVAKKDVHMPKH
+PELADKN-VPNLHVMKAM---QSLKSRGYVKEQFAWRHFYWYLTNEGIQYLRDFLHLPPE
+I-------------VPATLRR----SRPE-TGR-P-RP--------K---G---L--EGE
+RPAR------------LSR--GETDR-D-----TYRRSA-VP-------------P--G-
+--AD-KKAE--AGA-GA-ATEFQF-----------------------------RG-GFGR
+GRGQ-------PPQ------------------
+>STRPU10368 | OMA803883 | W4YGB5 | [Strongylocentrotus purpuratus]
+M---CHTSGPNWI------------VVTHQGQ----------------------------
+----------------------TGGKKGMLMPKVNRVAIYENLFKEGVIVAKKDFYSPKH
+PEL--ES-VPNLHVIKAC---QSLKSRGYVKEQFAWRHYYWYLTNEGIQYLRDYLHLPPE
+I-------------VPATLKRQ---PRTE-TAR-P-KP--------RVIEGRGGP--E--
+--RG------------GPP--SDGQR-Q-----EYRRGP----------------G--G-
+--PD-KKGD--AGA-GA-TQDFQF-----------------------------KG-GFGR
+GRSQ-------PPQ------------------

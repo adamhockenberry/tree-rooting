@@ -11,6 +11,13 @@ import weighting_methods
 import pairwise_weighting
 from collections import defaultdict
 
+
+
+
+
+
+
+
 ###########################################################################################
 #Mid-point rooting
 ###########################################################################################
@@ -162,10 +169,10 @@ def MinVar_root_adhock_general(tree, weights_type=None, **kwargs):
     ###
     if weights_type in ['GSC', 'GSCn']:
         initial_weights = weighting_methods.GSC_adhock(tree)
-        #Instantiate a weights dictionary with the root node
         weights_array_dict = {}
         weights_array_dict[tree.root] = np.array([initial_weights[i] for i in tree.get_terminals()])
         weights_update_fxn = update_GSC_weights_dict
+
     elif weights_type == 'HH':
         fasta_records = list(SeqIO.parse(kwargs['fasta_loc'], 'fasta'))
         initial_weights = weighting_methods.HH_adhock(fasta_records)
@@ -173,10 +180,12 @@ def MinVar_root_adhock_general(tree, weights_type=None, **kwargs):
         weights_array = np.array([initial_weights[i.name] for i in tree.get_terminals()])
         weights_array_dict = defaultdict(lambda: weights_array)
         weights_update_fxn = no_updating
+    
     elif not weights_type:
         weights_array = np.array([1. for i in tree.get_terminals()])
         weights_array_dict = defaultdict(lambda: weights_array)
         weights_update_fxn = no_updating
+    
     else:
         print('Problem interpreting weights_type. See docs for valid options. Returning')
         return
@@ -335,7 +344,6 @@ def branch_scan_MinVar_general(modifier, ds_dists, us_dists, all_weights):
     dsw = DescrStatsW(all_dists, all_weights)
     return dsw.var
 
-
 def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array, ds_count, finished, weights_type):
     """
     See docs for "optimize_root_loc_on_branch_MinVar_general". For a given branch, this will take the 
@@ -345,7 +353,7 @@ def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array
     Input/s:
     my_clade - Bio.Phylo clade object
     depths_array - 1D numpy array of all the depths for each terminal
-    weights_array - 2D numpy array of all the weights for each terminal (last column counts)
+    weights_array - 1D numpy array of all the weights for each terminal 
     ds_count - number of downstream terminals emanating from this clade
     finished - list of all completed terminals during the depth first search
     weights_type - important for decideing whether or not to normalize weights at the end
@@ -365,13 +373,10 @@ def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array
     ###################################################
     #Weights for all downstream terminals
     ###################################################
-    downstream_weights = np.array(weights_array[len(finished):len(finished)+ds_count, -1])
+    downstream_weights = np.array(weights_array[len(finished):len(finished)+ds_count])
     #And all upstream terminals
-    upstream_weights = np.concatenate((weights_array[:len(finished), -1],\
-                                       weights_array[len(finished)+ds_count:, -1]))
-    #Also will need to know the old weights for upstream folks which should be the second to last column
-    old_upstream_weights = np.concatenate((weights_array[:len(finished), -2],\
-                                           weights_array[len(finished)+ds_count:, -2]))
+    upstream_weights = np.concatenate((weights_array[:len(finished)],\
+                                       weights_array[len(finished)+ds_count:]))
     ###################################################
     #Set the bounds and optimize the GSC specific function
     ###################################################
@@ -379,13 +384,13 @@ def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array
     #Valid options for method are L-BFGS-B, SLSQP and TNC
     res = minimize(branch_scan_MinVar_GSC, np.array(np.mean(bl_bounds)),\
                           args=(downstream_dists, upstream_dists,\
-                                downstream_weights, upstream_weights, old_upstream_weights, weights_type),\
+                                downstream_weights, upstream_weights, weights_type),\
                           bounds=bl_bounds, method='L-BFGS-B')
     return res 
 
 
     
-def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights, old_us_weights, weights_type):
+def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights, weights_type):
     """ 
     See docs for "branch_scan_MinVar_general". This is the function to minimize in order to optimaly 
     situate the root on the putative branch and is SPECIFIC to GSC weighting schemes. I should really    
@@ -399,7 +404,6 @@ def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights,
     us_dists - array of upstream root-to-tip distances
     ds_weights - array of downstream terminal weights
     us_weights - array of upstream terminal weights
-    old_us_weights - array of upstream terminal weights at the last step
     weights_type - passed unchanged to determine whether or not to normalize
 
     Output/s:
@@ -425,12 +429,13 @@ def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights,
     else:
         temp_ds_weights = ds_weights + modifier
     #Get the total old upstream weights
-    total_us = np.sum(old_us_weights)
+    total_us = np.sum(us_weights)
     #Reclaim the branch length (modifier) from all the upstream weights
     if total_us != 0:
-        temp_us_weights = us_weights - (old_us_weights/total_us*modifier)
+        temp_us_weights = us_weights - (us_weights/total_us*modifier)
     #Special case for terminal branches
     else:
+        print('This condition should perhaps never occur and should be investigated')
         temp_us_weights = us_weights - modifier
     #Put all the weights together
     all_weights = np.concatenate((temp_ds_weights, temp_us_weights))
@@ -450,17 +455,130 @@ def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights,
     dsw = DescrStatsW(all_dists, all_weights)
     return dsw.var
 
+#def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array, ds_count, finished, weights_type):
+#    """
+#    See docs for "optimize_root_loc_on_branch_MinVar_general". For a given branch, this will take the 
+#    depths and weights and optimize the exact location of the root for that particular branch. This function 
+#    is SPECIFIC to GSC weighting schemes (both the initial and my normalized version).    
+#    
+#    Input/s:
+#    my_clade - Bio.Phylo clade object
+#    depths_array - 1D numpy array of all the depths for each terminal
+#    weights_array - 2D numpy array of all the weights for each terminal (last column counts)
+#    ds_count - number of downstream terminals emanating from this clade
+#    finished - list of all completed terminals during the depth first search
+#    weights_type - important for decideing whether or not to normalize weights at the end
+#    
+#    Output/s:
+#    res - the function optima (scipy.optimize object)
+#    
+#    """
+#    ###################################################
+#    #Root-to-tip distances for all downstream terminals
+#    ###################################################
+#    downstream_dists = np.array(depths_array[len(finished):len(finished)+ds_count])
+#    #And all upstream terminals
+#    upstream_dists = np.concatenate((depths_array[:len(finished)],\
+#                                     depths_array[len(finished)+ds_count:]))
+#    
+#    ###################################################
+#    #Weights for all downstream terminals
+#    ###################################################
+#    downstream_weights = np.array(weights_array[len(finished):len(finished)+ds_count, -1])
+#    #And all upstream terminals
+#    upstream_weights = np.concatenate((weights_array[:len(finished), -1],\
+#                                       weights_array[len(finished)+ds_count:, -1]))
+#    #Also will need to know the old weights for upstream folks which should be the second to last column
+#    old_upstream_weights = np.concatenate((weights_array[:len(finished), -2],\
+#                                           weights_array[len(finished)+ds_count:, -2]))
+#    ###################################################
+#    #Set the bounds and optimize the GSC specific function
+#    ###################################################
+#    bl_bounds = np.array([[0., my_clade.branch_length]])
+#    #Valid options for method are L-BFGS-B, SLSQP and TNC
+#    res = minimize(branch_scan_MinVar_GSC, np.array(np.mean(bl_bounds)),\
+#                          args=(downstream_dists, upstream_dists,\
+#                                downstream_weights, upstream_weights, old_upstream_weights, weights_type),\
+#                          bounds=bl_bounds, method='L-BFGS-B')
+#    return res 
+#
+#
+#    
+#def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights, old_us_weights, weights_type):
+#    """ 
+#    See docs for "branch_scan_MinVar_general". This is the function to minimize in order to optimaly 
+#    situate the root on the putative branch and is SPECIFIC to GSC weighting schemes. I should really    
+#    try to make this a bit quicker/simpler if possible, there might a redundant array operation or two
+#    but at present it works. 
+#
+#    Input/s:
+#    modifier - This is the parameter to be optimized! Essentially a float of how much to shift the
+#                root left or right so as to minimize the root-to-tip variance
+#    ds_dists - array of downstream root-to-tip distances
+#    us_dists - array of upstream root-to-tip distances
+#    ds_weights - array of downstream terminal weights
+#    us_weights - array of upstream terminal weights
+#    old_us_weights - array of upstream terminal weights at the last step
+#    weights_type - passed unchanged to determine whether or not to normalize
+#
+#    Output/s:
+#    dsw.var - weighted variance
+#    
+#    """
+#    ###########################################################################
+#    #Adjust the downstream and upstream root-to-tip distances with the modifier
+#    ###########################################################################
+#    temp_ds_dists = ds_dists + modifier
+#    temp_us_dists = us_dists - modifier
+#    all_dists = np.concatenate((temp_ds_dists, temp_us_dists))
+#    
+#    ###########################################################################
+#    #Now adjust the downstream and upstream weights
+#    ###########################################################################
+#    #First get the total downstream weights
+#    total_ds = np.sum(ds_weights)
+#    #Divide up the added branch length (modifier) across the downstream weights
+#    if total_ds != 0:
+#        temp_ds_weights = ds_weights + (ds_weights/total_ds*modifier)
+#    #Special case if nothing is downstream (for terminal branches)
+#    else:
+#        temp_ds_weights = ds_weights + modifier
+#    #Get the total old upstream weights
+#    total_us = np.sum(old_us_weights)
+#    #Reclaim the branch length (modifier) from all the upstream weights
+#    if total_us != 0:
+#        temp_us_weights = us_weights - (old_us_weights/total_us*modifier)
+#    #Special case for terminal branches
+#    else:
+#        temp_us_weights = us_weights - modifier
+#    #Put all the weights together
+#    all_weights = np.concatenate((temp_ds_weights, temp_us_weights))
+#    #In GSC weighting, the weights can't be less than the distance! Minor numerical rounding errors can
+#    #cause this to happen
+#    all_weights = np.minimum(all_weights, all_dists) 
+#    #Finally putting that boolean I've been passing around to use. Basically this is a re-scaling
+#    #of the GSC weights that I came up with that expresses each GSC weight for a given terminal
+#    #as a fraction of its total possible weight (its depth). In practice, it is a less dramatic 
+#    #weighting scheme than the non-normalized counterpart.
+#    if weights_type=='GSCn':
+#        all_weights = np.divide(all_weights, all_dists, out=np.zeros_like(all_weights), where=all_dists!=0)
+#    
+#    ###########################################################################
+#    #Calculate weighted variance and return
+#    ###########################################################################
+#    dsw = DescrStatsW(all_dists, all_weights)
+#    return dsw.var
+
 def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
     """    
-    This is pretty convoluted and could perhaps be simplified greatly with more thought. A lot of steps
-    but should be linear in O(t). The goal/purpose is to not have to re-calculate GSC weights for each 
-    possible root location. Rather, calculate these values once at the starting root node and then 
-    apply this function when recursively crawling the tree.
+    This allows for rapid re-calculation of GSC weights for all possible root positions on 
+    a tree. Specifically, this function takes the weights for a parent clade and re-calcs
+    for a daughter clade
     
     Input/s:
     my_clade - just a Bio.Phylo clade object
     parent_clade - the parent of the relevant clade
-    weights_dict - the existing dictionary of clade(key):weights matrix(value) pairs
+    weights_dict - the existing dictionary of clade(key):weights array(value) pairs
     finished - a list of the terminals that have been completed (used for rapidly accessing
                 the downstream and upstream terminals)
                 
@@ -474,30 +592,76 @@ def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
     new_array = np.array(weights_dict[parent_clade])
     #This is the total "weight" to reclaim from the downstream terms and distribute to the upstreams
     bl_to_disperse = my_clade.branch_length
-    assert np.isclose(bl_to_disperse, np.sum(new_array[len(finished):len(finished)+ds_count, -1])-\
-                                    np.sum(new_array[len(finished):len(finished)+ds_count, -2]))
     
-    #Get the total current weight of all upstream terms
-    to_divide = np.sum(new_array[:,-1]) - np.sum(new_array[len(finished):len(finished)+ds_count, -1])
-    #Array of values to add to the first and second set of upstream terms
-    to_add_a = new_array[:len(finished),-1]/to_divide * bl_to_disperse + new_array[:len(finished),-1]
-    to_add_b = new_array[len(finished)+ds_count:,-1]/to_divide * bl_to_disperse + new_array[len(finished)+ds_count:,-1]
-    
-    #Subtract the values from the downstream terms by rolling the values over
-    new_array[len(finished):len(finished)+ds_count] =\
-                np.roll(new_array[len(finished):len(finished)+ds_count], 1, axis=1)
-    #And setting the first column to be zeros
-    new_array[len(finished):len(finished)+ds_count, 0] = 0
-    #Finally, append now column of zeros
-    new_array = np.append(new_array, np.zeros([len(new_array),1]), axis=1)
-    #Roll the downstream terms again
-    new_array[len(finished):len(finished)+ds_count] =\
-                np.roll(new_array[len(finished):len(finished)+ds_count], 1, axis=1)
-    #Append the new vals for both upstream term setes
-    new_array[:len(finished),-1] = to_add_a
-    new_array[len(finished)+ds_count:,-1] = to_add_b
+    #Recover from downstream terminals
+    current_ds_weights = np.sum(new_array[len(finished):len(finished)+ds_count])
+    if current_ds_weights > 0:
+        to_subtract = new_array[len(finished):len(finished)+ds_count]/current_ds_weights*-1*bl_to_disperse
+    else:
+        to_subtract = np.zeros_like(new_array[len(finished):len(finished)+ds_count])
+
+    #Disperse to upstream terminals
+    current_us_weights = np.sum(new_array[:len(finished)]) + np.sum(new_array[len(finished)+ds_count:]) 
+    if current_us_weights > 0:
+        to_add_a = new_array[:len(finished)] / current_us_weights * bl_to_disperse  
+        to_add_b = new_array[len(finished)+ds_count:] / current_us_weights * bl_to_disperse
+    else:
+        to_add_a = np.zeros_like(new_array[:len(finished)])  
+        to_add_b = np.zeros_like(new_array[len(finished)+ds_count:])
+        
+    assert  np.isclose(np.sum(to_add_a) + np.sum(to_add_b) + np.sum(to_subtract), 0.)
     #et voila
+    new_array = new_array + np.concatenate((to_add_a, to_subtract, to_add_b))
     weights_dict[my_clade] = new_array   
+
+#def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
+#    """    
+#    This is pretty convoluted and could perhaps be simplified greatly with more thought. A lot of steps
+#    but should be linear in O(t). The goal/purpose is to not have to re-calculate GSC weights for each 
+#    possible root location. Rather, calculate these values once at the starting root node and then 
+#    apply this function when recursively crawling the tree.
+#    
+#    Input/s:
+#    my_clade - just a Bio.Phylo clade object
+#    parent_clade - the parent of the relevant clade
+#    weights_dict - the existing dictionary of clade(key):weights matrix(value) pairs
+#    finished - a list of the terminals that have been completed (used for rapidly accessing
+#                the downstream and upstream terminals)
+#                
+#    Output/s:
+#    weights_dict - the updated weights_dict object with a new key:val pair added to it
+#    
+#    """
+#    #Get number of downstream terminals
+#    ds_count = len(my_clade.get_terminals())
+#    #Copy matrix from parent
+#    new_array = np.array(weights_dict[parent_clade])
+#    #This is the total "weight" to reclaim from the downstream terms and distribute to the upstreams
+#    bl_to_disperse = my_clade.branch_length
+#    assert np.isclose(bl_to_disperse, np.sum(new_array[len(finished):len(finished)+ds_count, -1])-\
+#                                    np.sum(new_array[len(finished):len(finished)+ds_count, -2]))
+#    
+#    #Get the total current weight of all upstream terms
+#    to_divide = np.sum(new_array[:,-1]) - np.sum(new_array[len(finished):len(finished)+ds_count, -1])
+#    #Array of values to add to the first and second set of upstream terms
+#    to_add_a = new_array[:len(finished),-1]/to_divide * bl_to_disperse + new_array[:len(finished),-1]
+#    to_add_b = new_array[len(finished)+ds_count:,-1]/to_divide * bl_to_disperse + new_array[len(finished)+ds_count:,-1]
+#    
+#    #Subtract the values from the downstream terms by rolling the values over
+#    new_array[len(finished):len(finished)+ds_count] =\
+#                np.roll(new_array[len(finished):len(finished)+ds_count], 1, axis=1)
+#    #And setting the first column to be zeros
+#    new_array[len(finished):len(finished)+ds_count, 0] = 0
+#    #Finally, append now column of zeros
+#    new_array = np.append(new_array, np.zeros([len(new_array),1]), axis=1)
+#    #Roll the downstream terms again
+#    new_array[len(finished):len(finished)+ds_count] =\
+#                np.roll(new_array[len(finished):len(finished)+ds_count], 1, axis=1)
+#    #Append the new vals for both upstream term setes
+#    new_array[:len(finished),-1] = to_add_a
+#    new_array[len(finished)+ds_count:,-1] = to_add_b
+#    #et voila
+#    weights_dict[my_clade] = new_array   
 
 def no_updating(*args):
     pass
@@ -534,7 +698,7 @@ def update_depth_array_dict(my_clade, parent_clade, depths_dict, finished):
 ###########################################################################################
 ###########################################################################################
 ###########################################################################################
-def mad_root_adhock(tree):
+def mad_root_adhock(tree, normalize_weights=False):
     ###Let's question this assumption that zero bls screw things up and comment it for now
     for node in tree.get_terminals() + tree.get_nonterminals():
         if node == tree.root:
@@ -546,10 +710,9 @@ def mad_root_adhock(tree):
     
     #############NOTE: Big debate/parameter here! Toggle on/off the ..._normalized line to alter the weights
     #################  pretty substantially. No clue which is better/makes more ideological sense.
-    weights_matrix_raw, weights_matrix, weights_matrix_normalized = pairwise_weighting.get_weight_matrices(tree)
-    #weights_matrix = weights_matrix_normalized
-    #weights_matrix = 1./weights_matrix_normalized
-    #weights_matrix = 1./weights_matrix
+    weights_matrix, weights_matrix_normalized, weights_matrix_raw, terminal_list = pairwise_weighting.get_weight_matrices(tree)
+    if normalize_weights:
+        weights_matrix = weights_matrix_normalized
     #Toggle this on/off to ensure that weight vals of one equal the regular MAD implementation
     #weights_matrix = np.ones((len(tree.get_terminals()), len(tree.get_terminals())))
     lca_matrix, initial_order = get_lca_matrix(tree)
