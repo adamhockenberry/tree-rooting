@@ -12,16 +12,10 @@ import pairwise_weighting
 from collections import defaultdict
 
 
-
-
-
-
-
-
 ###########################################################################################
 #Mid-point rooting
 ###########################################################################################
-def mp_root_adhock(tree):
+def MP_root(tree):
     """
     This function implements a clever mid-point rooting algorithm that is linear with tree
     size as opposed to the behavior of many mid-point rooting algorithms that are polynomial
@@ -126,9 +120,9 @@ def final_root(clade1, clade2, max_distance, tree):
 
 
 ###########################################################################################
-#Rooting via the minimum variance of root-to-tip distances
+#Rooting via the minimum variance of root-to-tip distances (MinVar)
 ###########################################################################################
-def MinVar_root_adhock_general(tree, weights_type=None, **kwargs):
+def MinVar_root_general(tree, weights_type=None, **kwargs):
     """ 
     This implements a rooting scheme to minimize the (weighted) variance of the root-to-tip
     distances for all leaves in the tree. It is unclear whether minimizing the variance or
@@ -168,14 +162,14 @@ def MinVar_root_adhock_general(tree, weights_type=None, **kwargs):
     depths_dict[tree.root] = np.array([initial_depths[i] for i in tree.get_terminals()])
     ###
     if weights_type in ['GSC', 'GSCn']:
-        initial_weights = weighting_methods.GSC_adhock(tree)
+        initial_weights = weighting_methods.calc_GSC_weights(tree)
         weights_array_dict = {}
         weights_array_dict[tree.root] = np.array([initial_weights[i] for i in tree.get_terminals()])
         weights_update_fxn = update_GSC_weights_dict
 
     elif weights_type == 'HH':
         fasta_records = list(SeqIO.parse(kwargs['fasta_loc'], 'fasta'))
-        initial_weights = weighting_methods.HH_adhock(fasta_records)
+        initial_weights = weighting_methods.calc_HH_weights(fasta_records)
         #Instantiate a weights dictionary with the root node
         weights_array = np.array([initial_weights[i.name] for i in tree.get_terminals()])
         weights_array_dict = defaultdict(lambda: weights_array)
@@ -226,7 +220,7 @@ def recursive_crawl_MinVar_general(my_clade, parent_clade, function_optima, dept
             for each putative root
     finished - list of all terminals that the depth first search has completed
     weights_update_fxn - function to update weights
-    weights_type - passed unchanged from MinVar_root_adhock_general. Used in updating weights when necessary
+    weights_type - passed unchanged from MinVar_root_general. Used in updating weights when necessary
 
     Output/s (updated versions of each of):
     function_optima
@@ -315,8 +309,6 @@ def optimize_root_loc_on_branch_MinVar_general(my_clade, depths_array, weights_a
                                 all_weights),\
                           bounds=bl_bounds, method='L-BFGS-B')
     return res  
-
-
     
 def branch_scan_MinVar_general(modifier, ds_dists, us_dists, all_weights):
     """
@@ -388,8 +380,6 @@ def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array
                           bounds=bl_bounds, method='L-BFGS-B')
     return res 
 
-
-    
 def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights, weights_type):
     """ 
     See docs for "branch_scan_MinVar_general". This is the function to minimize in order to optimaly 
@@ -454,6 +444,299 @@ def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights,
     ###########################################################################
     dsw = DescrStatsW(all_dists, all_weights)
     return dsw.var
+
+def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
+    """    
+    This allows for rapid re-calculation of GSC weights for all possible root positions on 
+    a tree. Specifically, this function takes the weights for a parent clade and re-calcs
+    for a daughter clade
+    
+    Input/s:
+    my_clade - just a Bio.Phylo clade object
+    parent_clade - the parent of the relevant clade
+    weights_dict - the existing dictionary of clade(key):weights array(value) pairs
+    finished - a list of the terminals that have been completed (used for rapidly accessing
+                the downstream and upstream terminals)
+                
+    Output/s:
+    weights_dict - the updated weights_dict object with a new key:val pair added to it
+    
+    """
+    #Get number of downstream terminals
+    ds_count = len(my_clade.get_terminals())
+    #Copy matrix from parent
+    new_array = np.array(weights_dict[parent_clade])
+    #This is the total "weight" to reclaim from the downstream terms and distribute to the upstreams
+    bl_to_disperse = my_clade.branch_length
+    
+    #Recover from downstream terminals
+    current_ds_weights = np.sum(new_array[len(finished):len(finished)+ds_count])
+    if current_ds_weights > 0:
+        to_subtract = new_array[len(finished):len(finished)+ds_count]/current_ds_weights*-1*bl_to_disperse
+    else:
+        to_subtract = np.zeros_like(new_array[len(finished):len(finished)+ds_count])
+
+    #Disperse to upstream terminals
+    current_us_weights = np.sum(new_array[:len(finished)]) + np.sum(new_array[len(finished)+ds_count:]) 
+    if current_us_weights > 0:
+        to_add_a = new_array[:len(finished)] / current_us_weights * bl_to_disperse  
+        to_add_b = new_array[len(finished)+ds_count:] / current_us_weights * bl_to_disperse
+    else:
+        to_add_a = np.zeros_like(new_array[:len(finished)])  
+        to_add_b = np.zeros_like(new_array[len(finished)+ds_count:])
+        
+    assert  np.isclose(np.sum(to_add_a) + np.sum(to_add_b) + np.sum(to_subtract), 0.)
+    #et voila
+    new_array = new_array + np.concatenate((to_add_a, to_subtract, to_add_b))
+    weights_dict[my_clade] = new_array   
+
+def no_updating(*args):
+    pass
+
+def update_depth_array_dict(my_clade, parent_clade, depths_dict, finished):
+    """
+    This function updates the depths of each terminal in a pretty straightforward manner.
+    
+    Input/s:
+    my_clade - Bio.Phylo clade object
+    parent_clade - parent of my_clade
+    depths_dict - the exsting dictionary of depths where: clade(key):array of depths (value)
+    finished - a list of all the terminals that have been completed in the depth first search
+    
+    Output/s:
+    depths_dict - the updated depths_dict
+    ds_count - the number of terminals downstream of this particular clade
+    
+    """
+    #First grab who is downstream of this new clade
+    ds_count = len(my_clade.get_terminals())
+    #Instantiate new array with values from parent
+    new_array = np.array(depths_dict[parent_clade])
+    #Subtract the branch length from all the downstream clades
+    new_array[len(finished):len(finished)+ds_count] -= my_clade.branch_length
+    #Add the branch length to all the upstream clades (two sets)
+    new_array[:len(finished)] += my_clade.branch_length
+    new_array[len(finished)+ds_count:] += my_clade.branch_length
+    #Update the dictionary
+    depths_dict[my_clade] = new_array
+    return depths_di ct, ds_count
+
+###########################################################################################
+#Rooting via the minimum ancestor deviation (MAD)
+###########################################################################################
+def MAD_root(tree, normalize_weights=False):
+    """
+    Docs forthcoming
+    """
+    for node in tree.get_terminals() + tree.get_nonterminals():
+        if node == tree.root:
+            continue
+        if node.branch_length == 0.:
+            node.branch_length = 10e-16
+    
+    #Get the starting LCA matrix where each entry i,j is the length of i's 
+    #distance to it's last common ancestor with j
+    weights_matrix, weights_matrix_normalized, weights_matrix_raw, terminal_list = pairwise_weighting.get_weight_matrices(tree)
+    if normalize_weights:
+        weights_matrix = weights_matrix_normalized
+    #Toggle this on/off to ensure that weight vals of one equal the regular MAD implementation
+    #weights_matrix = np.ones((len(tree.get_terminals()), len(tree.get_terminals())))
+    
+    lca_matrix, initial_order = get_lca_matrix(tree)
+    tempy_dict = {}
+    tempy_dict[tree.root] = lca_matrix
+    
+    #Recursively compute MAD for all possible rootings of the tree
+    explored, function_optima, lca_matrix_dict = recursive_crawl_MAD(tree.root, None, [], [], tree, tempy_dict, weights_matrix)
+    #And using the optimal root position, re-root the tree
+    function_optima = sorted(function_optima, key=lambda x: x[1][1])
+    function_optima_success = (obj for obj in function_optima if np.isnan(obj[1][0]) == False)
+    winner = next(function_optima_success)
+    runner_up = next(function_optima_success)
+    #Re-root at this point
+    tree.root_with_outgroup(winner[0], outgroup_branch_length=0.)
+    assert tree.root.clades[1].branch_length == 0.
+    assert tree.root.clades[1] == winner[0]
+    #And adjust the branch lengths around this root
+    tree.root.clades[0].branch_length -= winner[1][0]
+    tree.root.clades[1].branch_length += winner[1][0]
+    if winner != function_optima[0]:
+        print('May want to investigate function optima, appears to be unsuccessful search result at the top')
+    RAI = winner[1][1] / runner_up[1][1]
+    return tree, RAI, function_optima
+
+def get_lca_matrix(tree):
+    """
+    The LCA matrix here is subtle. I'm actually calculating the distance to the last common ancestor
+    for all pairs of terminal leaves for an initial hypothetical bifurcating root. This is done pretty
+    straightforwardly by first getting the variance-covariance matrix and then subtracting each terminals
+    depth from this matrix.
+
+    """
+    assert tree.is_bifurcating()
+    initial_order = tree.get_terminals()
+    initial_matrix = np.zeros((len(initial_order),len(initial_order)))
+    #Call recursive function
+    vcv_matrix, finished_list = recursive_vcv_matrix(tree.root, initial_matrix, finished=[])
+    ###This makes the matrix asymmetrical and gives us what we ultimately want
+    final_matrix = vcv_matrix - vcv_matrix.diagonal()
+    return final_matrix, initial_order
+
+def recursive_vcv_matrix(node, vcv_matrix, finished=[]):
+    """
+    This computes the variance-covariance matrix for a given root where each diagonal entry
+    is the depth of that terminal to the root and each off diagonal entry is the amount of variance
+    shared between terminals i and j (i.e. the distance of their last common ancestor to the root)
+    """
+    if node.branch_length:
+        ###Keep track of the number of downstream terminal nodes and how many are finished
+        n_terminals = len(node.get_terminals())
+        n_finished = len(finished)
+        ###Add the branch length of the node to all downstream terminals (and only the downstream terminals)
+        vcv_matrix[n_finished:n_finished+n_terminals, n_finished:n_finished+n_terminals] += node.branch_length
+    ###Recurse
+    if len(node.clades) == 2:
+        l_clade, r_clade = node.clades
+        vcv_matrix, finished = recursive_vcv_matrix(l_clade, vcv_matrix, finished)
+        vcv_matrix, finished = recursive_vcv_matrix(r_clade, vcv_matrix, finished)
+    elif len(node.clades) == 0:
+        finished.append(node)
+    else:
+        print("ERROR: APPEARS TO BE A NON-BINARY TREE. MATRIX GENERATION WILL PROBABLY FAIL")
+    return vcv_matrix, finished
+
+def recursive_crawl_MAD(node, parent_node, explored, function_optima, tree, lca_matrix_dict, weights_matrix):
+    """
+    Another recursive function. This calculates the MAD value across the entire tree. It does so by constantly updating
+    the lca_matrix so that this need not be re-computed and using these values to calculate the deviations between same side
+    and different side nodes (side being relative to the proposed root node). 
+    """
+    if parent_node:###Don't bother calculating on the current root node since it is redundant
+        ###Update the LCA matrix and track the number of downstream terminals from this node
+        lca_matrix_dict, ds_count = update_lca_matrix_dict(lca_matrix_dict, node, parent_node, tree, explored)
+        ###And optimize the MAD score using this lca matrix
+        res = MAD_from_matrix(node, ds_count, lca_matrix_dict[node], explored, weights_matrix)
+        function_optima.append((node, res))
+    ###Recurse
+    if len(node.clades) == 2:
+        l_clade, r_clade = node.clades        
+        explored, function_optima, lca_matrix_dict = recursive_crawl_MAD(l_clade, node, explored, function_optima, tree, lca_matrix_dict, weights_matrix)
+        explored, function_optima, lca_matrix_dict = recursive_crawl_MAD(r_clade, node, explored, function_optima, tree, lca_matrix_dict, weights_matrix)
+    elif len(node.clades) == 0: ###base case
+        explored.append(node)
+        return explored, function_optima, lca_matrix_dict
+    else:
+        print('non binary tree...?')
+    return explored, function_optima, lca_matrix_dict 
+
+def update_lca_matrix_dict(lca_matrix_dict, my_clade, parent, my_tree, finished):
+    """
+    This does some heavy lifting in the calculations later
+    """
+    ###Get the branch length in question
+    bl = my_clade.branch_length
+    ###And the number of terminals downstream of this node
+    ds_count = len(my_clade.get_terminals())
+    ###Copy over the matrix of this node's parent
+    new_matrix = np.array(lca_matrix_dict[parent])
+    ###Since I moved down a node, subtract the current branch length
+    ###from all downstream nodes
+    new_matrix[len(finished):len(finished)+ds_count, :] -= bl
+    ###And add the branch length to the upstream nodes (note that the values will 
+    ###cancel out for the square of downstream terminals)
+    new_matrix[:, len(finished):len(finished)+ds_count] += bl
+    ###Add to the dictionary
+    lca_matrix_dict[my_clade] = new_matrix
+    return lca_matrix_dict, ds_count
+
+def MAD_from_matrix(my_clade, ds_count, lca_matrix, finished, weights_matrix):
+    """
+    And this pretty much does the whole MAD calculation given the up-to-date lca_matrix.
+
+    In theory it's just measuring the deviations from the upper right triangle and the lower left.
+    I feel like that fact could be leveraged to perform these calculations in a far less complicated way
+    """
+    #my_matrix = lca_matrix[len(finished):len(finished)+ds_count, len(finished):len(finished)+ds_count]
+    #other_matrix = np.delete(lca_matrix, np.s_[len(finished):len(finished)+ds_count], 0)
+    #other_matrix = np.delete(other_matrix, np.s_[len(finished):len(finished)+ds_count],1)
+    #my_matrix_trans = my_matrix.T
+    #other_matrix_trans = other_matrix.T
+    #ss_a_dists = np.abs(np.concatenate((my_matrix[np.triu_indices(ds_count, k=1)],\
+    #        other_matrix[np.triu_indices(other_matrix.shape[0], k=1)])))
+    #ss_b_dists = np.abs(np.concatenate((my_matrix_trans[np.triu_indices(ds_count, k=1)],\
+    #        other_matrix_trans[np.triu_indices(other_matrix_trans.shape[0], k=1)])))
+    #ss_total_dists = ss_a_dists + ss_b_dists
+    #ss_devs = np.abs(((2*ss_a_dists)/ss_total_dists)-1) 
+    #
+    #ds_a_dists = lca_matrix[len(finished):len(finished)+ds_count,np.r_[:len(finished),len(finished)+ds_count:lca_matrix.shape[0]]].flatten(order='C')
+    #ds_b_dists = lca_matrix[np.r_[:len(finished),len(finished)+ds_count:lca_matrix.shape[0]], len(finished):len(finished)+ds_count].flatten(order='F')
+    #ds_total_dists = ds_a_dists + ds_b_dists
+
+    ####Using the analytical solution to "rho" parameter as outlined in the MAD paper
+    #total_bl = my_clade.branch_length
+    #if total_bl > 0.:
+    #    rho = np.sum((ds_total_dists-(2*ds_a_dists))*ds_total_dists**-2)/(2*total_bl*np.sum(ds_total_dists**-2))
+    #    modifier = total_bl*rho
+    #    modifier = min(max(0, modifier), total_bl) 
+    #else:
+    #    modifier = 0.
+ 
+    ####Rescale the distances with the optimized modifier
+    #ds_a_dists = ds_a_dists + modifier
+    #ds_b_dists = ds_b_dists - modifier
+    #ds_total_dists = ds_a_dists + ds_b_dists
+    ####Calculate their deviations
+    #ds_devs = np.abs(((2*ds_a_dists)/ds_total_dists)-1)
+    ####Concatenate them with the pre-computed same side deviations (ss_devs)
+    #all_devs = np.concatenate((ss_devs, ds_devs))
+    ####And compute final MAD score
+    #all_devs = all_devs**2
+    #dev_score = np.mean(all_devs)
+    #dev_score = dev_score**0.5
+
+    
+    #An alternative that looks cleaner, but runs slower. Ho hum. Keeping it here incase it comes in handy for weighting
+    #n_terms = lca_matrix.shape[0]
+    #ds_a_dists = lca_matrix[len(finished):len(finished)+ds_count,np.r_[:len(finished),len(finished)+ds_count:n_terms]].flatten(order='C')
+    #ds_b_dists = lca_matrix[np.r_[:len(finished),len(finished)+ds_count:n_terms], len(finished):len(finished)+ds_count].flatten(order='F')
+    #ds_total_dists = ds_a_dists + ds_b_dists
+    ####Using the analytical solution to "rho" parameter as outlined in the MAD paper
+    #total_bl = my_clade.branch_length
+    #if total_bl > 0.:
+    #    rho = np.sum((ds_total_dists-(2*ds_a_dists))*ds_total_dists**-2)/(2*total_bl*np.sum(ds_total_dists**-2))
+    #    modifier = total_bl*rho
+    #    modifier = min(max(0, modifier), total_bl) 
+    #else:
+    #    modifier = 0.
+    #new_matrix[len(finished):len(finished)+ds_count, np.r_[:len(finished), len(finished)+ds_count:n_terms]] += modifier
+    #new_matrix[np.r_[:len(finished), len(finished)+ds_count:n_terms], len(finished):len(finished)+ds_count] -= modifier
+    #all_mat = np.abs(new_matrix + new_matrix.T)[np.triu_indices(n_terms, k=1)]
+    #one_side = np.abs(new_matrix)[np.triu_indices(n_terms, k=1)]
+    #devs = np.abs(((2*one_side)/all_mat)-1)
+    #dev_score = np.mean(devs**2)**0.5
+
+    #And a numeric solution to the problem
+    n_finished = len(finished)
+    n_terms = lca_matrix.shape[0]
+    bl_bounds = np.array([[0, my_clade.branch_length]]) 
+    res = minimize(optimize_fxn_MAD, np.array(0.),\
+                           args=(lca_matrix, weights_matrix, n_finished, n_terms, ds_count),\
+                           bounds=bl_bounds, method='L-BFGS-B')
+    modifier = res.x[0]
+    dev_score = res.fun
+    return (modifier, dev_score)
+
+def optimize_fxn_MAD(modifier, lca_matrix, weights_matrix, n_finished, n_terms, ds_count):
+    new_matrix = np.array(lca_matrix)
+    new_matrix[n_finished:n_finished+ds_count, np.r_[:n_finished, n_finished+ds_count:n_terms]] += modifier
+    new_matrix[np.r_[:n_finished, n_finished+ds_count:n_terms], n_finished:n_finished+ds_count] -= modifier
+    all_mat = np.abs(new_matrix + new_matrix.T)[np.triu_indices(n_terms, k=1)]
+    one_side = np.abs(new_matrix)[np.triu_indices(n_terms, k=1)]
+    devs = np.abs(((2*one_side)/all_mat)-1)
+    dev_score = np.average(devs**2, weights=weights_matrix[np.triu_indices(n_terms, k=1)])**0.5
+    return dev_score
+
+
 
 #def optimize_root_loc_on_branch_MinVar_GSC(my_clade, depths_array, weights_array, ds_count, finished, weights_type):
 #    """
@@ -568,52 +851,7 @@ def branch_scan_MinVar_GSC(modifier, ds_dists, us_dists, ds_weights, us_weights,
 #    ###########################################################################
 #    dsw = DescrStatsW(all_dists, all_weights)
 #    return dsw.var
-
-def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
-    """    
-    This allows for rapid re-calculation of GSC weights for all possible root positions on 
-    a tree. Specifically, this function takes the weights for a parent clade and re-calcs
-    for a daughter clade
-    
-    Input/s:
-    my_clade - just a Bio.Phylo clade object
-    parent_clade - the parent of the relevant clade
-    weights_dict - the existing dictionary of clade(key):weights array(value) pairs
-    finished - a list of the terminals that have been completed (used for rapidly accessing
-                the downstream and upstream terminals)
-                
-    Output/s:
-    weights_dict - the updated weights_dict object with a new key:val pair added to it
-    
-    """
-    #Get number of downstream terminals
-    ds_count = len(my_clade.get_terminals())
-    #Copy matrix from parent
-    new_array = np.array(weights_dict[parent_clade])
-    #This is the total "weight" to reclaim from the downstream terms and distribute to the upstreams
-    bl_to_disperse = my_clade.branch_length
-    
-    #Recover from downstream terminals
-    current_ds_weights = np.sum(new_array[len(finished):len(finished)+ds_count])
-    if current_ds_weights > 0:
-        to_subtract = new_array[len(finished):len(finished)+ds_count]/current_ds_weights*-1*bl_to_disperse
-    else:
-        to_subtract = np.zeros_like(new_array[len(finished):len(finished)+ds_count])
-
-    #Disperse to upstream terminals
-    current_us_weights = np.sum(new_array[:len(finished)]) + np.sum(new_array[len(finished)+ds_count:]) 
-    if current_us_weights > 0:
-        to_add_a = new_array[:len(finished)] / current_us_weights * bl_to_disperse  
-        to_add_b = new_array[len(finished)+ds_count:] / current_us_weights * bl_to_disperse
-    else:
-        to_add_a = np.zeros_like(new_array[:len(finished)])  
-        to_add_b = np.zeros_like(new_array[len(finished)+ds_count:])
-        
-    assert  np.isclose(np.sum(to_add_a) + np.sum(to_add_b) + np.sum(to_subtract), 0.)
-    #et voila
-    new_array = new_array + np.concatenate((to_add_a, to_subtract, to_add_b))
-    weights_dict[my_clade] = new_array   
-
+#
 #def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
 #    """    
 #    This is pretty convoluted and could perhaps be simplified greatly with more thought. A lot of steps
@@ -662,252 +900,3 @@ def update_GSC_weights_dict(my_clade, parent_clade, weights_dict, finished):
 #    new_array[len(finished)+ds_count:,-1] = to_add_b
 #    #et voila
 #    weights_dict[my_clade] = new_array   
-
-def no_updating(*args):
-    pass
-
-def update_depth_array_dict(my_clade, parent_clade, depths_dict, finished):
-    """
-    This function updates the depths of each terminal in a pretty straightforward manner.
-    
-    Input/s:
-    my_clade - Bio.Phylo clade object
-    parent_clade - parent of my_clade
-    depths_dict - the exsting dictionary of depths where: clade(key):array of depths (value)
-    finished - a list of all the terminals that have been completed in the depth first search
-    
-    Output/s:
-    depths_dict - the updated depths_dict
-    ds_count - the number of terminals downstream of this particular clade
-    
-    """
-    #First grab who is downstream of this new clade
-    ds_count = len(my_clade.get_terminals())
-    #Instantiate new array with values from parent
-    new_array = np.array(depths_dict[parent_clade])
-    #Subtract the branch length from all the downstream clades
-    new_array[len(finished):len(finished)+ds_count] -= my_clade.branch_length
-    #Add the branch length to all the upstream clades (two sets)
-    new_array[:len(finished)] += my_clade.branch_length
-    new_array[len(finished)+ds_count:] += my_clade.branch_length
-    #Update the dictionary
-    depths_dict[my_clade] = new_array
-    return depths_dict, ds_count
-
-###########################################################################################
-###########################################################################################
-###########################################################################################
-###########################################################################################
-def mad_root_adhock(tree, normalize_weights=False):
-    ###Let's question this assumption that zero bls screw things up and comment it for now
-    for node in tree.get_terminals() + tree.get_nonterminals():
-        if node == tree.root:
-            continue
-        if node.branch_length == 0.:
-            node.branch_length = 10e-16
-    ###Get the starting LCA matrix where each entry i,j is the length of i's 
-    ###distance to it's last common ancestor with j
-    
-    #############NOTE: Big debate/parameter here! Toggle on/off the ..._normalized line to alter the weights
-    #################  pretty substantially. No clue which is better/makes more ideological sense.
-    weights_matrix, weights_matrix_normalized, weights_matrix_raw, terminal_list = pairwise_weighting.get_weight_matrices(tree)
-    if normalize_weights:
-        weights_matrix = weights_matrix_normalized
-    #Toggle this on/off to ensure that weight vals of one equal the regular MAD implementation
-    #weights_matrix = np.ones((len(tree.get_terminals()), len(tree.get_terminals())))
-    lca_matrix, initial_order = get_lca_matrix(tree)
-    tempy_dict = {}
-    tempy_dict[tree.root] = lca_matrix
-    ###Recursively compute MAD for all possible rootings of the tree
-    explored, function_optima, lca_matrix_dict = recursive_crawl_mad(tree.root, None, [], [], tree, tempy_dict, weights_matrix)
-    ###And using the optimal root position, re-root the tree
-    function_optima = sorted(function_optima, key=lambda x: x[1][1])
-    function_optima_success = (obj for obj in function_optima if np.isnan(obj[1][0]) == False)
-    winner = next(function_optima_success)
-    runner_up = next(function_optima_success)
-    #Re-root at this point
-    tree.root_with_outgroup(winner[0], outgroup_branch_length=0.)
-    assert tree.root.clades[1].branch_length == 0.
-    assert tree.root.clades[1] == winner[0]
-    #And adjust the branch lengths around this root
-    tree.root.clades[0].branch_length -= winner[1][0]
-    tree.root.clades[1].branch_length += winner[1][0]
-    if winner != function_optima[0]:
-        print('May want to investigate function optima, appears to be unsuccessful search result at the top')
-    RAI = winner[1][1] / runner_up[1][1]
-    return tree, RAI, function_optima
-
-def get_lca_matrix(tree):
-    """
-    The LCA matrix here is subtle. I'm actually calculating the distance to the last common ancestor
-    for all pairs of terminal leaves for an initial hypothetical bifurcating root. This is done pretty
-    straightforwardly by first getting the variance-covariance matrix and then subtracting each terminals
-    depth from this matrix.
-
-    """
-    assert tree.is_bifurcating()
-    initial_order = tree.get_terminals()
-    initial_matrix = np.zeros((len(initial_order),len(initial_order)))
-    #Call recursive function
-    vcv_matrix, finished_list = recursive_vcv_matrix(tree.root, initial_matrix, finished=[])
-    ###This makes the matrix asymmetrical and gives us what we ultimately want
-    final_matrix = vcv_matrix - vcv_matrix.diagonal()
-    return final_matrix, initial_order
-
-def recursive_vcv_matrix(node, vcv_matrix, finished=[]):
-    """
-    This computes the variance-covariance matrix for a given root where each diagonal entry
-    is the depth of that terminal to the root and each off diagonal entry is the amount of variance
-    shared between terminals i and j (i.e. the distance of their last common ancestor to the root)
-    """
-    if node.branch_length:
-        ###Keep track of the number of downstream terminal nodes and how many are finished
-        n_terminals = len(node.get_terminals())
-        n_finished = len(finished)
-        ###Add the branch length of the node to all downstream terminals (and only the downstream terminals)
-        vcv_matrix[n_finished:n_finished+n_terminals, n_finished:n_finished+n_terminals] += node.branch_length
-    ###Recurse
-    if len(node.clades) == 2:
-        l_clade, r_clade = node.clades
-        vcv_matrix, finished = recursive_vcv_matrix(l_clade, vcv_matrix, finished)
-        vcv_matrix, finished = recursive_vcv_matrix(r_clade, vcv_matrix, finished)
-    elif len(node.clades) == 0:
-        finished.append(node)
-    else:
-        print("ERROR: APPEARS TO BE A NON-BINARY TREE. MATRIX GENERATION WILL PROBABLY FAIL")
-    return vcv_matrix, finished
-
-
-def recursive_crawl_mad(node, parent_node, explored, function_optima, tree, lca_matrix_dict, weights_matrix):
-    """
-    Another recursive function. This calculates the MAD value across the entire tree. It does so by constantly updating
-    the lca_matrix so that this need not be re-computed and using these values to calculate the deviations between same side
-    and different side nodes (side being relative to the proposed root node). 
-    """
-    if parent_node:###Don't bother calculating on the current root node since it is redundant
-        ###Update the LCA matrix and track the number of downstream terminals from this node
-        lca_matrix_dict, ds_count = update_lca_matrix_dict(lca_matrix_dict, node, parent_node, tree, explored)
-        ###And optimize the MAD score using this lca matrix
-        res = mad_from_matrix(node, ds_count, lca_matrix_dict[node], explored, weights_matrix)
-        function_optima.append((node, res))
-    ###Recurse
-    if len(node.clades) == 2:
-        l_clade, r_clade = node.clades        
-        explored, function_optima, lca_matrix_dict = recursive_crawl_mad(l_clade, node, explored, function_optima, tree, lca_matrix_dict, weights_matrix)
-        explored, function_optima, lca_matrix_dict = recursive_crawl_mad(r_clade, node, explored, function_optima, tree, lca_matrix_dict, weights_matrix)
-    elif len(node.clades) == 0: ###base case
-        explored.append(node)
-        return explored, function_optima, lca_matrix_dict
-    else:
-        print('non binary tree...?')
-    return explored, function_optima, lca_matrix_dict 
-
-def update_lca_matrix_dict(lca_matrix_dict, my_clade, parent, my_tree, finished):
-    """
-    This does some heavy lifting in the calculations later
-    """
-    ###Get the branch length in question
-    bl = my_clade.branch_length
-    ###And the number of terminals downstream of this node
-    ds_count = len(my_clade.get_terminals())
-    ###Copy over the matrix of this node's parent
-    new_matrix = np.array(lca_matrix_dict[parent])
-    ###Since I moved down a node, subtract the current branch length
-    ###from all downstream nodes
-    new_matrix[len(finished):len(finished)+ds_count, :] -= bl
-    ###And add the branch length to the upstream nodes (note that the values will 
-    ###cancel out for the square of downstream terminals)
-    new_matrix[:, len(finished):len(finished)+ds_count] += bl
-    ###Add to the dictionary
-    lca_matrix_dict[my_clade] = new_matrix
-    return lca_matrix_dict, ds_count
-
-def mad_from_matrix(my_clade, ds_count, lca_matrix, finished, weights_matrix):
-    """
-    And this pretty much does the whole MAD calculation given the up-to-date lca_matrix.
-
-    In theory it's just measuring the deviations from the upper right triangle and the lower left.
-    I feel like that fact could be leveraged to perform these calculations in a far less complicated way
-    """
-    #my_matrix = lca_matrix[len(finished):len(finished)+ds_count, len(finished):len(finished)+ds_count]
-    #other_matrix = np.delete(lca_matrix, np.s_[len(finished):len(finished)+ds_count], 0)
-    #other_matrix = np.delete(other_matrix, np.s_[len(finished):len(finished)+ds_count],1)
-    #my_matrix_trans = my_matrix.T
-    #other_matrix_trans = other_matrix.T
-    #ss_a_dists = np.abs(np.concatenate((my_matrix[np.triu_indices(ds_count, k=1)],\
-    #        other_matrix[np.triu_indices(other_matrix.shape[0], k=1)])))
-    #ss_b_dists = np.abs(np.concatenate((my_matrix_trans[np.triu_indices(ds_count, k=1)],\
-    #        other_matrix_trans[np.triu_indices(other_matrix_trans.shape[0], k=1)])))
-    #ss_total_dists = ss_a_dists + ss_b_dists
-    #ss_devs = np.abs(((2*ss_a_dists)/ss_total_dists)-1) 
-    #
-    #ds_a_dists = lca_matrix[len(finished):len(finished)+ds_count,np.r_[:len(finished),len(finished)+ds_count:lca_matrix.shape[0]]].flatten(order='C')
-    #ds_b_dists = lca_matrix[np.r_[:len(finished),len(finished)+ds_count:lca_matrix.shape[0]], len(finished):len(finished)+ds_count].flatten(order='F')
-    #ds_total_dists = ds_a_dists + ds_b_dists
-
-    ####Using the analytical solution to "rho" parameter as outlined in the MAD paper
-    #total_bl = my_clade.branch_length
-    #if total_bl > 0.:
-    #    rho = np.sum((ds_total_dists-(2*ds_a_dists))*ds_total_dists**-2)/(2*total_bl*np.sum(ds_total_dists**-2))
-    #    modifier = total_bl*rho
-    #    modifier = min(max(0, modifier), total_bl) 
-    #else:
-    #    modifier = 0.
- 
-    ####Rescale the distances with the optimized modifier
-    #ds_a_dists = ds_a_dists + modifier
-    #ds_b_dists = ds_b_dists - modifier
-    #ds_total_dists = ds_a_dists + ds_b_dists
-    ####Calculate their deviations
-    #ds_devs = np.abs(((2*ds_a_dists)/ds_total_dists)-1)
-    ####Concatenate them with the pre-computed same side deviations (ss_devs)
-    #all_devs = np.concatenate((ss_devs, ds_devs))
-    ####And compute final MAD score
-    #all_devs = all_devs**2
-    #dev_score = np.mean(all_devs)
-    #dev_score = dev_score**0.5
-
-    
-    #An alternative that looks cleaner, but runs slower. Ho hum. Keeping it here incase it comes in handy for weighting
-    #n_terms = lca_matrix.shape[0]
-    #ds_a_dists = lca_matrix[len(finished):len(finished)+ds_count,np.r_[:len(finished),len(finished)+ds_count:n_terms]].flatten(order='C')
-    #ds_b_dists = lca_matrix[np.r_[:len(finished),len(finished)+ds_count:n_terms], len(finished):len(finished)+ds_count].flatten(order='F')
-    #ds_total_dists = ds_a_dists + ds_b_dists
-    ####Using the analytical solution to "rho" parameter as outlined in the MAD paper
-    #total_bl = my_clade.branch_length
-    #if total_bl > 0.:
-    #    rho = np.sum((ds_total_dists-(2*ds_a_dists))*ds_total_dists**-2)/(2*total_bl*np.sum(ds_total_dists**-2))
-    #    modifier = total_bl*rho
-    #    modifier = min(max(0, modifier), total_bl) 
-    #else:
-    #    modifier = 0.
-    #
-    #
-    #
-    #
-    #new_matrix[len(finished):len(finished)+ds_count, np.r_[:len(finished), len(finished)+ds_count:n_terms]] += modifier
-    #new_matrix[np.r_[:len(finished), len(finished)+ds_count:n_terms], len(finished):len(finished)+ds_count] -= modifier
-    #all_mat = np.abs(new_matrix + new_matrix.T)[np.triu_indices(n_terms, k=1)]
-    #one_side = np.abs(new_matrix)[np.triu_indices(n_terms, k=1)]
-    #devs = np.abs(((2*one_side)/all_mat)-1)
-    #dev_score = np.mean(devs**2)**0.5
-    
-    n_finished = len(finished)
-    n_terms = lca_matrix.shape[0]
-    bl_bounds = np.array([[0, my_clade.branch_length]]) 
-    res = minimize(optimize_fxn_mad, np.array(0.),\
-                           args=(lca_matrix, weights_matrix, n_finished, n_terms, ds_count),\
-                           bounds=bl_bounds, method='L-BFGS-B')
-    modifier = res.x[0]
-    dev_score = res.fun
-    return (modifier, dev_score)
-
-def optimize_fxn_mad(modifier, lca_matrix, weights_matrix, n_finished, n_terms, ds_count):
-    new_matrix = np.array(lca_matrix)
-    new_matrix[n_finished:n_finished+ds_count, np.r_[:n_finished, n_finished+ds_count:n_terms]] += modifier
-    new_matrix[np.r_[:n_finished, n_finished+ds_count:n_terms], n_finished:n_finished+ds_count] -= modifier
-    all_mat = np.abs(new_matrix + new_matrix.T)[np.triu_indices(n_terms, k=1)]
-    one_side = np.abs(new_matrix)[np.triu_indices(n_terms, k=1)]
-    devs = np.abs(((2*one_side)/all_mat)-1)
-    dev_score = np.average(devs**2, weights=weights_matrix[np.triu_indices(n_terms, k=1)])**0.5
-    return dev_score
