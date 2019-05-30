@@ -519,7 +519,7 @@ def update_depth_array_dict(my_clade, parent_clade, depths_dict, finished):
     new_array[len(finished)+ds_count:] += my_clade.branch_length
     #Update the dictionary
     depths_dict[my_clade] = new_array
-    return depths_di ct, ds_count
+    return depths_dict, ds_count
 
 ###########################################################################################
 #Rooting via the minimum ancestor deviation (MAD)
